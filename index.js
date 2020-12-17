@@ -6,17 +6,27 @@ const nodemailer = require('nodemailer');
 const pino = require('express-pino-logger')();
 const { videoToken } = require('./tokens');
 
+// const transporter = nodemailer.createTransport({
+//   service: 'Gmail',
+//   host: 'smtp.gmail.com',
+//   port: 587,
+//   auth: {
+//     type: 'OAuth2',
+//     user: process.env.SMTP_AUTH_USER,
+//     clientId: process.env.SMTP_OAUTH_CLIENT_ID,
+//     clientSecret: process.env.SMTP_OAUTH_CLIENT_SECRET,
+//     refreshToken: process.env.SMTP_OAUTH_REFRESH_TOKEN,
+//     accessToken: process.env.SMTP_OAUTH_ACCESS_TOKEN,
+//   }
+// });
+
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   host: 'smtp.gmail.com',
   port: 587,
   auth: {
-    type: 'OAuth2',
     user: process.env.SMTP_AUTH_USER,
-    clientId: process.env.SMTP_OAUTH_CLIENT_ID,
-    clientSecret: process.env.SMTP_OAUTH_CLIENT_SECRET,
-    refreshToken: process.env.SMTP_OAUTH_REFRESH_TOKEN,
-    accessToken: process.env.SMTP_OAUTH_ACCESS_TOKEN,
+    pass: process.env.SMTP_AUTH_PASS
   }
 });
 
