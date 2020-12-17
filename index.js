@@ -13,7 +13,10 @@ const transporter = nodemailer.createTransport({
   auth: {
     type: 'OAuth2',
     user: process.env.SMTP_AUTH_USER,
-    pass: process.env.SMTP_AUTH_PASS
+    clientId: process.env.SMTP_OAUTH_CLIENT_ID,
+    clientSecret: process.env.SMTP_OAUTH_CLIENT_SECRET,
+    refreshToken: process.env.SMTP_OAUTH_REFRESH_TOKEN,
+    accessToken: process.env.SMTP_OAUTH_ACCESS_TOKEN,
   }
 });
 
