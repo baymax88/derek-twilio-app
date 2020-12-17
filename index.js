@@ -85,7 +85,7 @@ app.post('/api/setMeeting', (req, res) => {
 });
 
 app.post('/api/greeting', (req, res) => {
-  const name = req.data.name || 'World';
+  const name = req.body.name || 'World';
   res.setHeader('Content-Type', 'application/json');
   res.send(JSON.stringify({ greeting: `Hello ${name}!` }));
 })
