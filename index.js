@@ -98,7 +98,7 @@ app.post('/api/endMeeting', (req, res) => {
     res.status(200).send({
       message: "Created Composition with SID=" + composition.sid
     })
-  })
+  }).catch(err => {return console.loG(err)})
 })
 
 app.post('/api/greeting', (req, res) => {
