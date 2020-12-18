@@ -89,7 +89,7 @@ button:hover {
   background-color: #000;
   margin-top: -2em;
   padding-top: 2em;
-  height: 100vh;
+  min-height: 100vh;
 }
 .room h2 {
   color: #fff;
