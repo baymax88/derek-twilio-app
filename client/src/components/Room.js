@@ -15,6 +15,7 @@ const Room = ({ roomName, token, handleLogout }) => {
   const handleEndMeeting = () => {
     console.log(participants)
     console.log(room)
+    handleLogout()
   }
 
   useEffect(() => {
