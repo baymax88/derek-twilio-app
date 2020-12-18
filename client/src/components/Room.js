@@ -13,7 +13,7 @@ const Room = ({ roomName, token, handleLogout }) => {
   const [audioMute, setAudioMute] = useState(false);
 
   const handleEndMeeting = () => {
-    console.log(participants[0])
+    console.log(participants)
     console.log(room)
   }
 
@@ -55,7 +55,9 @@ const Room = ({ roomName, token, handleLogout }) => {
   const renderRemoteParticipant = useCallback(() => {
     return (
       <div className="remote-participants">
-        <Participant key={participants[0].sid} participant={participants[0]} audioMute={audioMute} />
+        {participants.length !== 0 &&
+          <Participant key={participants[0].sid} participant={participants[0]} audioMute={audioMute} />
+        }
       </div>
     )
   }, [participants, audioMute])
