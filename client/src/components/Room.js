@@ -20,6 +20,7 @@ const Room = ({ roomName, token, handleLogout }) => {
     Video.connect(token, {
       name: roomName
     }).then(room => {
+      console.log(room)
       setRoom(room);
       room.on('participantConnected', participantConnected);
       room.on('participantDisconnected', participantDisconnected);
