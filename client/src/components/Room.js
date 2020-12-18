@@ -73,7 +73,7 @@ const Room = ({ roomName, token, handleLogout }) => {
             ''
           )}
         </div> */}
-        {() => renderRemoteParticipant(audioMute)}
+        {renderRemoteParticipant(audioMute)}
         <div className="button-box">
           <button className="phone-off" onClick={handleLogout}>
             <PhoneOff />
