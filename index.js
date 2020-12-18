@@ -95,7 +95,9 @@ app.post('/api/endMeeting', (req, res) => {
     },
     format: 'mp4'
   }).then(composition =>{
-    console.log("Created Composition with SID=" + composition.sid);
+    res.status(200).send({
+      message: "Created Composition with SID=" + composition.sid
+    })
   })
 })
 

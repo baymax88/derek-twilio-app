@@ -6,19 +6,10 @@ import {
 } from 'react-feather';
 import axios from 'axios';
 
-const Room = ({ roomName, token, handleLogout }) => {
+const Room = ({ roomName, token, handleEndMeeting }) => {
   const [room, setRoom] = useState(null);
   const [participants, setParticipants] = useState([]);
   const [audioMute, setAudioMute] = useState(false);
-
-  const handleEndMeeting = () => {
-    if (room) {
-      axios.post('/api/endMeeting', {
-        roomSid: room.sid
-      })
-      handleLogout()
-    }
-  }
 
   useEffect(() => {
     const participantConnected = participant => {
