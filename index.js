@@ -60,8 +60,7 @@ app.post('/api/setMeeting', (req, res) => {
     html: `
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-    <h2 style="font-family: 'Roboto', sans-serif;">You are invited to join a video call on ${req.body.dateTime.split('T')[0]} ${req.body.dateTime.split('T')[1].substring(0, 5)}.</h2>
-    <h2 style="font-family: 'Roboto', sans-serif;">Please click on <a href="${process.env.REACT_APP_BASE_URL}/meeting/${room}/${token.toJwt()}">here</a> to join.</h2>
+    <h2 style="font-family: 'Roboto', sans-serif;">You are invited to join a video call on ${req.body.dateTime.split('T')[0]} ${req.body.dateTime.split('T')[1].substring(0, 5)}.<br/>Please click on <a href="${process.env.REACT_APP_BASE_URL}/meeting/${room}/${token.toJwt()}">here</a> to join.</h2>
     `
   };
 

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const Participant = ({ participant }) => {
+const Participant = ({ participant, audioMute }) => {
   const [videoTracks, setVideoTracks] = useState([]);
   const [audioTracks, setAudioTracks] = useState([]);
+  const [isAudioMute, setIsAudioMute] = useState(false);
 
   const videoRef = useRef();
   const audioRef = useRef();
@@ -43,6 +44,10 @@ const Participant = ({ participant }) => {
   }, [participant]);
 
   useEffect(() => {
+    setIsAudioMute(audioMute);
+  }, [audioMute]);
+
+  useEffect(() => {
     const videoTrack = videoTracks[0];
     if (videoTrack) {
       videoTrack.attach(videoRef.current);
@@ -66,7 +71,7 @@ const Participant = ({ participant }) => {
     <div className="participant">
       <h3>{participant.identity}</h3>
       <video ref={videoRef} autoPlay={true} />
-      <audio ref={audioRef} autoPlay={true} muted={false} />
+      <audio ref={audioRef} autoPlay={true} muted={isAudioMute} />
     </div>
   );
 };

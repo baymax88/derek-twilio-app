@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import Video from 'twilio-video';
 import Participant from './Participant';
 import {
-  PhoneOff
+  PhoneOff,
+  Mic,
+  MicOff
 } from 'react-feather';
 
 const Room = ({ roomName, token, handleLogout }) => {
   const [room, setRoom] = useState(null);
   const [participants, setParticipants] = useState([]);
+  const [audioMute, setAudioMute] = useState(false);
 
   useEffect(() => {
     const participantConnected = participant => {
@@ -44,14 +47,21 @@ const Room = ({ roomName, token, handleLogout }) => {
     };
   }, [roomName, token]);
 
-  const remoteParticipants = participants.map(participant => (
-    <Participant key={participant.sid} participant={participant} />
-  ));
+  const renderRemoteParticipant = audioMute => {
+    return (
+      <div className="remote-participants">
+        {
+          participants.map(participant => (
+            <Participant key={participant.sid} participant={participant} audioMute={audioMute} />
+          ))
+        }
+      </div>
+    )
+  }
 
   return (
     <div className="room">
       <h2>Room: {roomName}</h2>
-      <button onClick={handleLogout}>End meeting</button>
       <div className="layout">
         {/* <div className="local-participant">
           {room ? (
@@ -63,10 +73,13 @@ const Room = ({ roomName, token, handleLogout }) => {
             ''
           )}
         </div> */}
-        <div className="remote-participants">{remoteParticipants}</div>
+        {renderRemoteParticipant}
         <div className="button-box">
           <button className="phone-off" onClick={handleLogout}>
             <PhoneOff />
+          </button>
+          <button className="audio" onClick={() => setAudioMute(!audioMute)}>
+            {audioMute ? <MicOff /> : <Mic />}
           </button>
         </div>
       </div>
