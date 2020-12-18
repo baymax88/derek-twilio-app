@@ -108,13 +108,13 @@ button:hover {
 .phone-off {
   background-color: #f0293e;
   border-radius: 50%;
-  padding: 2em;
+  padding: 1em;
 }
 .audio {
   background-color: #5a5555;
   border-radius: 50%;
   margin-left: 2em;
-  padding: 2em;
+  padding: 1em;
 }
 
 .local-participant {
