@@ -6,6 +6,8 @@ const nodemailer = require('nodemailer');
 const pino = require('express-pino-logger')();
 const { videoToken } = require('./tokens');
 
+const client = require('twilio')(config.twilio.accountSid, config.twilio.authToken);
+
 // const transporter = nodemailer.createTransport({
 //   service: 'Gmail',
 //   host: 'smtp.gmail.com',
@@ -95,6 +97,10 @@ app.post('/api/setMeeting', (req, res) => {
     });
   });
 });
+
+app.post('/api/endMeeting', (req, res) => {
+  
+})
 
 app.post('/api/greeting', (req, res) => {
   const name = req.body.name || 'World';

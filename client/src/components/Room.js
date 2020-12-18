@@ -20,7 +20,6 @@ const Room = ({ roomName, token, handleLogout }) => {
     Video.connect(token, {
       name: roomName
     }).then(room => {
-      console.log(room)
       setRoom(room);
       room.on('participantConnected', participantConnected);
       room.on('participantDisconnected', participantDisconnected);
@@ -51,7 +50,7 @@ const Room = ({ roomName, token, handleLogout }) => {
       <h2>Room: {roomName}</h2>
       <button onClick={handleLogout}>End meeting</button>
       <div className="layout">
-        <div className="local-participant">
+        {/* <div className="local-participant">
           {room ? (
             <Participant
               key={room.localParticipant.sid}
@@ -60,7 +59,7 @@ const Room = ({ roomName, token, handleLogout }) => {
           ) : (
             ''
           )}
-        </div>
+        </div> */}
         <div className="remote-participants">{remoteParticipants}</div>
       </div>
     </div>
