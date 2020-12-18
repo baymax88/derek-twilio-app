@@ -47,7 +47,7 @@ const Room = ({ roomName, token, handleLogout }) => {
     };
   }, [roomName, token]);
 
-  const renderRemoteParticipant = useCallback(audioMute => {
+  const renderRemoteParticipant = useCallback(() => {
     return (
       <div className="remote-participants">
         {
@@ -57,7 +57,7 @@ const Room = ({ roomName, token, handleLogout }) => {
         }
       </div>
     )
-  }, [participants])
+  }, [participants, audioMute])
 
   return (
     <div className="room">
@@ -73,7 +73,7 @@ const Room = ({ roomName, token, handleLogout }) => {
             ''
           )}
         </div> */}
-        {renderRemoteParticipant(audioMute)}
+        {renderRemoteParticipant()}
         <div className="button-box">
           <button className="phone-off" onClick={handleLogout}>
             <PhoneOff />
