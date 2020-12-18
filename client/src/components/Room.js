@@ -12,6 +12,11 @@ const Room = ({ roomName, token, handleLogout }) => {
   const [participants, setParticipants] = useState([]);
   const [audioMute, setAudioMute] = useState(false);
 
+  const handleEndMeeting = () => {
+    console.log(participants[0])
+    console.log(room)
+  }
+
   useEffect(() => {
     const participantConnected = participant => {
       setParticipants(prevParticipants => [...prevParticipants, participant]);
@@ -50,11 +55,7 @@ const Room = ({ roomName, token, handleLogout }) => {
   const renderRemoteParticipant = useCallback(() => {
     return (
       <div className="remote-participants">
-        {
-          participants.map(participant => (
-            <Participant key={participant.sid} participant={participant} audioMute={audioMute} />
-          ))
-        }
+        <Participant key={participants[0].sid} participant={participants[0]} audioMute={audioMute} />
       </div>
     )
   }, [participants, audioMute])
@@ -75,12 +76,12 @@ const Room = ({ roomName, token, handleLogout }) => {
         </div> */}
         {renderRemoteParticipant()}
         <div className="button-box">
-          <button className="phone-off" onClick={handleLogout}>
+          <button className="phone-off" onClick={handleEndMeeting}>
             <PhoneOff />
           </button>
-          <button className="audio" onClick={() => setAudioMute(!audioMute)}>
+          {/* <button className="audio" onClick={() => setAudioMute(!audioMute)}>
             {audioMute ? <MicOff /> : <Mic />}
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
