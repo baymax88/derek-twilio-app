@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import Room from '../components/Room';
+import axios from 'axios';
 
 const MeetingView = () => {
   const params = useParams();
@@ -13,16 +14,14 @@ const MeetingView = () => {
     history.push('/booking');
   }, [history]);
 
-  const handleEndMeeting = () => {
-    if (room) {
-      axios.post('/api/endMeeting', {
-        roomSid: room.sid
-      }).then(res => {
-        if (res.status === 200) {
-          handleLogout()
-        }
-      }).catch(err => console.log(err.message))
-    }
+  const handleEndMeeting = (roomSid) => {
+    axios.post('/api/endMeeting', {
+      roomSid
+    }).then(res => {
+      if (res.status === 200) {
+        handleLogout()
+      }
+    }).catch(err => console.log(err.message))
   }
 
   React.useEffect(() => {

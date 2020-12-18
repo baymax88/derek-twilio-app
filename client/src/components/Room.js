@@ -4,7 +4,6 @@ import Participant from './Participant';
 import {
   PhoneOff,
 } from 'react-feather';
-import axios from 'axios';
 
 const Room = ({ roomName, token, handleEndMeeting }) => {
   const [room, setRoom] = useState(null);
@@ -72,7 +71,7 @@ const Room = ({ roomName, token, handleEndMeeting }) => {
         </div> */}
         {renderRemoteParticipant()}
         <div className="button-box">
-          <button className="phone-off" onClick={handleEndMeeting}>
+          <button className="phone-off" onClick={() => handleEndMeeting(room.sid)}>
             <PhoneOff />
           </button>
           {/* <button className="audio" onClick={() => setAudioMute(!audioMute)}>
