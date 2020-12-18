@@ -13,7 +13,6 @@ const Room = ({ roomName, token, handleLogout }) => {
   const [audioMute, setAudioMute] = useState(false);
 
   const handleEndMeeting = () => {
-    console.log(participants)
     console.log(room)
     handleLogout()
   }
