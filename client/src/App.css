@@ -113,6 +113,7 @@ button:hover {
 .audio {
   background-color: #5a5555;
   border-radius: 50%;
+  margin-left: 2em;
   padding: 2em;
 }
 
