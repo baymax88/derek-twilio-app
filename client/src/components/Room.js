@@ -3,9 +3,8 @@ import Video from 'twilio-video';
 import Participant from './Participant';
 import {
   PhoneOff,
-  Mic,
-  MicOff
 } from 'react-feather';
+import axios from 'axios';
 
 const Room = ({ roomName, token, handleLogout }) => {
   const [room, setRoom] = useState(null);
@@ -13,8 +12,12 @@ const Room = ({ roomName, token, handleLogout }) => {
   const [audioMute, setAudioMute] = useState(false);
 
   const handleEndMeeting = () => {
-    console.log(room)
-    handleLogout()
+    if (room) {
+      axios.post('/api/endMeeting', {
+        roomSid: room.sid
+      })
+      handleLogout()
+    }
   }
 
   useEffect(() => {

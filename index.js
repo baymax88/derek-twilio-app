@@ -5,22 +5,9 @@ const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const pino = require('express-pino-logger')();
 const { videoToken } = require('./tokens');
+const Twilio = require('twilio');
 
-const client = require('twilio')(config.twilio.accountSid, config.twilio.authToken);
-
-// const transporter = nodemailer.createTransport({
-//   service: 'Gmail',
-//   host: 'smtp.gmail.com',
-//   port: 587,
-//   auth: {
-//     type: 'OAuth2',
-//     user: process.env.SMTP_AUTH_USER,
-//     clientId: process.env.SMTP_OAUTH_CLIENT_ID,
-//     clientSecret: process.env.SMTP_OAUTH_CLIENT_SECRET,
-//     refreshToken: process.env.SMTP_OAUTH_REFRESH_TOKEN,
-//     accessToken: process.env.SMTP_OAUTH_ACCESS_TOKEN,
-//   }
-// });
+const client = new Twilio(config.twilio.apiKey, config.twilio.apiSecret, {accountSid: config.twilio.accountSid});
 
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
@@ -98,7 +85,18 @@ app.post('/api/setMeeting', (req, res) => {
 });
 
 app.post('/api/endMeeting', (req, res) => {
-  
+  const roomSid = req.body.roomSid;
+  client.video.compositions.create({
+    roomSid: roomSid,
+    videoLayout: {
+      transcode: {
+        video_sources: roomSid
+      }
+    },
+    format: 'mp4'
+  }).then(composition =>{
+    console.log("Created Composition with SID=" + composition.sid);
+  })
 })
 
 app.post('/api/greeting', (req, res) => {
