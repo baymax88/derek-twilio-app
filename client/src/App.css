@@ -89,11 +89,7 @@ button:hover {
   background-color: #000;
   margin-top: -2em;
   padding-top: 2em;
-}
-.room button {
-  position: absolute;
-  top: 0;
-  right: 20px;
+  height: 100vh;
 }
 .room h2 {
   color: #fff;
@@ -102,6 +98,16 @@ button:hover {
   text-align: center;
   font-weight: 300;
   margin-bottom: 1em;
+}
+
+.button-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.phone-off {
+  background-color: #f0293e;
+  border-radius: 50%;
 }
 
 .local-participant {

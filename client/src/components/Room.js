@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Video from 'twilio-video';
 import Participant from './Participant';
+import {
+  PhoneOff
+} from 'react-feather';
 
 const Room = ({ roomName, token, handleLogout }) => {
   const [room, setRoom] = useState(null);
@@ -61,6 +64,11 @@ const Room = ({ roomName, token, handleLogout }) => {
           )}
         </div> */}
         <div className="remote-participants">{remoteParticipants}</div>
+        <div className="button-box">
+          <button className="phone-off" onClick={handleLogout}>
+            <PhoneOff />
+          </button>
+        </div>
       </div>
     </div>
   );
