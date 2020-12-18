@@ -15,11 +15,12 @@ const MeetingView = () => {
   }, [history]);
 
   const handleEndMeeting = (roomSid) => {
+    handleLogout()
     axios.post('/api/endMeeting', {
       roomSid
     }).then(res => {
       if (res.status === 200) {
-        handleLogout()
+        console.log('success')
       }
     }).catch(err => console.log(err.message))
   }
