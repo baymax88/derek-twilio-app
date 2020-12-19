@@ -59,7 +59,7 @@ const Room = ({ roomName, token, handleEndMeeting }) => {
 
   const audioMute = useCallback(() => {
     if (room) {
-      if (isAudioMute) {
+      if (!isAudioMute) {
         room.localParticipant.audioTracks.forEach(function(trackId, track) {
           track.disable();
         });
