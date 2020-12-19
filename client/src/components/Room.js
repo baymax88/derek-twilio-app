@@ -61,10 +61,12 @@ const Room = ({ roomName, token, handleEndMeeting }) => {
     if (room) {
       if (!isAudioMute) {
         room.localParticipant.audioTracks.forEach(function(trackId, track) {
+          console.log(track)
           track.disable();
         });
       } else {
         room.localParticipant.audioTracks.forEach(function(trackId, track) {
+          console.log(track)
           track.enable();
         });
       }
