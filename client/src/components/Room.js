@@ -3,6 +3,8 @@ import Video from 'twilio-video';
 import Participant from './Participant';
 import {
   PhoneOff,
+  Mic,
+  MicOff
 } from 'react-feather';
 
 const Room = ({ roomName, token, handleEndMeeting }) => {
