@@ -8,7 +8,7 @@ import {
 const Room = ({ roomName, token, handleEndMeeting }) => {
   const [room, setRoom] = useState(null);
   const [participants, setParticipants] = useState([]);
-  const [audioMute, setAudioMute] = useState(false);
+  const [isAudioMute, setIsAudioMute] = useState(false);
 
   useEffect(() => {
     const participantConnected = participant => {
@@ -49,11 +49,25 @@ const Room = ({ roomName, token, handleEndMeeting }) => {
     return (
       <div className="remote-participants">
         {participants.length !== 0 &&
-          <Participant key={participants[0].sid} participant={participants[0]} audioMute={audioMute} />
+          <Participant key={participants[0].sid} participant={participants[0]} />
         }
       </div>
     )
-  }, [participants, audioMute])
+  }, [participants]);
+
+  const audioMute = useCallback(() => {
+    if (isAudioMute) {
+      participants.audioTracks.forEach(function(trackId, track) {
+        track.disable();
+      });
+      setIsAudioMute(false)
+    } else {
+      participants.audioTracks.forEach(function(trackId, track) {
+        track.enable();
+      });
+      setIsAudioMute(true)
+    }
+  }, [participants, isAudioMute]);
 
   return (
     <div className="room">
@@ -74,9 +88,9 @@ const Room = ({ roomName, token, handleEndMeeting }) => {
           <button className="phone-off" onClick={() => handleEndMeeting(room.sid)}>
             <PhoneOff />
           </button>
-          {/* <button className="audio" onClick={() => setAudioMute(!audioMute)}>
+          <button className="audio" onClick={audioMute}>
             {audioMute ? <MicOff /> : <Mic />}
-          </button> */}
+          </button>
         </div>
       </div>
     </div>
