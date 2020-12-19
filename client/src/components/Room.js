@@ -89,7 +89,7 @@ const Room = ({ roomName, token, handleEndMeeting }) => {
             <PhoneOff />
           </button>
           <button className="audio" onClick={audioMute}>
-            {audioMute ? <MicOff /> : <Mic />}
+            {isAudioMute ? <MicOff /> : <Mic />}
           </button>
         </div>
       </div>
