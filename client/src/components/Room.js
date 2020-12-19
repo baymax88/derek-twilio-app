@@ -58,16 +58,18 @@ const Room = ({ roomName, token, handleEndMeeting }) => {
   }, [participants]);
 
   const audioMute = useCallback(() => {
-    if (isAudioMute) {
-      participants.audioTracks.forEach(function(trackId, track) {
-        track.disable();
-      });
-      setIsAudioMute(false)
-    } else {
-      participants.audioTracks.forEach(function(trackId, track) {
-        track.enable();
-      });
-      setIsAudioMute(true)
+    if (participants.length !== 0) {
+      if (isAudioMute) {
+        participants.audioTracks.forEach(function(trackId, track) {
+          track.disable();
+        });
+        setIsAudioMute(false)
+      } else {
+        participants.audioTracks.forEach(function(trackId, track) {
+          track.enable();
+        });
+        setIsAudioMute(true)
+      }
     }
   }, [participants, isAudioMute]);
 
