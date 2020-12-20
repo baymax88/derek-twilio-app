@@ -55,7 +55,7 @@ const download = async (compositionSid, pathName) => {
   })
 }
 
-const sendRecordingEmail = (compositionSid, res, userEmail) => {
+const sendRecordingEmail = (compositionSid, userEmail) => {
   const mailData = {
     from: 'sales@hy.ly',
     to: userEmail,
@@ -71,7 +71,6 @@ const sendRecordingEmail = (compositionSid, res, userEmail) => {
     if (error) {
       return console.log(error);
     }
-    res.status(200).send();
   });
 }
 
@@ -127,6 +126,7 @@ app.post('/api/setMeeting', (req, res) => {
 app.post('/api/endMeeting', (req, res) => {
   const roomSid = req.body.roomSid;
   const userEmail = req.body.userEmail;
+  const compositionSid = '';
   const client = require('twilio')(config.twilio.apiKey, config.twilio.apiSecret, {accountSid: config.twilio.accountSid});
   client.video.rooms(roomSid).update({ status: 'completed' });
   client.video.compositions.create({
@@ -138,14 +138,16 @@ app.post('/api/endMeeting', (req, res) => {
       }
     },
     format: 'mp4'
-  }).then(composition =>{
-    // send email that includes endpoint link that will return composition video file
-    sendRecordingEmail(composition.sid, res, userEmail);
+  }).then(composition => {
+    compositionSid = composition.sid;
+    res.status(200).send();
   }).catch(err => {
     res.status(500).send({
       message: err.message
     });
   });
+
+  setTimeout(sendRecordingEmail(composition.sid, userEmail), 3*60*1000)
 });
 
 app.get('/api/getMeeting', (req, res) => {
