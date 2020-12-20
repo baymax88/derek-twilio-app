@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
+const cron = require('node-cron');
 const pino = require('express-pino-logger')();
 const { videoToken } = require('./tokens');
 const axios = require('axios');
@@ -53,6 +54,26 @@ const download = async (compositionSid, pathName) => {
       reject(err);
     })
   })
+}
+
+const sendRecordingEmail = (compositionSid, res) => {
+  const mailData = {
+    from: 'sales@hy.ly',
+    to: userEmail,
+    subject: 'Recording of our video call',
+    html: `
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <h2 style="font-family: 'Roboto', sans-serif;">Please find linked the recording of our call.\n\n<a href="${process.env.REACT_APP_BASE_URL}/api/getMeeting?compositionsid=${compositionSid}">Get recording of our video call</a></h2>
+    `
+  };
+
+  transporter.sendMail(mailData, (error, info) => {
+    if (error) {
+      return console.log(error);
+    }
+    res.status(200).send();
+  });
 }
 
 app.post('/api/setMeeting', (req, res) => {
@@ -120,27 +141,7 @@ app.post('/api/endMeeting', (req, res) => {
     format: 'mp4'
   }).then(composition =>{
     // send email that includes endpoint link that will return composition video file
-    const mailData = {
-      from: 'sales@hy.ly',
-      to: userEmail,
-      subject: 'Recording of our video call',
-      html: `
-      <link rel="preconnect" href="https://fonts.gstatic.com">
-      <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-      <h2 style="font-family: 'Roboto', sans-serif;">Please find linked the recording of our call.\n\n<a href="${process.env.REACT_APP_BASE_URL}/api/getMeeting?compositionsid=${composition.sid}">Get recording of our video call</a></h2>
-      `
-    };
-  
-    transporter.sendMail(mailData, (error, info) => {
-      if (error) {
-        return console.log(error);
-      }
-      res.status(200).send({
-        message: "Created Composition :" + composition.links.media,
-        info
-      });
-    });
-
+    setTimeout(sendRecordingEmail(composition.sid, res), 5*60*1000);
   }).catch(err => {
     res.status(500).send({
       message: err.message
@@ -153,9 +154,14 @@ app.get('/api/getMeeting', (req, res) => {
   const pathName = path.resolve(__dirname, 'files', 'recording.mp4');
 
   download(compositionSid, pathName).then(() => {
-    res.status(200).send({
-      message: `${process.env.REACT_APP_BASE_URL}/files/recording.mp4`
+    res.writeHead(200, {
+        'Content-Type': 'text/html'
     });
+    res.write(`
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <h2 style="font-family: 'Roboto', sans-serif;"><a href="${process.env.REACT_APP_BASE_URL}/files/recording.mp4" download>Download the recording.</a></h2>
+    `)
   });
 });
 
