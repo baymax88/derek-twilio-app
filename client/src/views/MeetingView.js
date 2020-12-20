@@ -18,6 +18,7 @@ const MeetingView = () => {
 
   const handleEndMeeting = React.useCallback(roomSid => {
     handleLogout()
+    console.log(data.email)
     axios.post('/api/endMeeting', {
       roomSid,
       userEmail: data.email
