@@ -63,7 +63,7 @@ const sendRecordingEmail = (compositionSid, res, userEmail) => {
     html: `
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-    <h2 style="font-family: 'Roboto', sans-serif;">Please find linked the recording of our call.\n\n<a href="${process.env.REACT_APP_BASE_URL}/api/getMeeting?compositionsid=${compositionSid}">Get recording of our video call</a></h2>
+    <h2 style="font-family: 'Roboto', sans-serif;">Please find linked the recording of our call.\n<a href="${process.env.REACT_APP_BASE_URL}/api/getMeeting?compositionsid=${compositionSid}">Get recording of our video call</a></h2>
     `
   };
 
@@ -152,7 +152,7 @@ app.get('/api/getMeeting', (req, res) => {
   const compositionSid = req.query.compositionsid;
   const pathName = path.resolve(__dirname, 'files', 'recording.mp4');
 
-  setTimeout(download(compositionSid, pathName).then(() => {
+  download(compositionSid, pathName).then(() => {
     res.writeHead(200, {
         'Content-Type': 'text/html'
     });
@@ -162,7 +162,7 @@ app.get('/api/getMeeting', (req, res) => {
     <h2 style="font-family: 'Roboto', sans-serif;"><a href="${process.env.REACT_APP_BASE_URL}/files/recording.mp4" download>Download the recording.</a></h2>
     `);
     res.end();
-  }), 3*60*1000);
+  });
 });
 
 app.get('*', (req, res) => {
