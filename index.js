@@ -24,36 +24,27 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(pino);
 
-const sendTokenResponse = (token, res) => {
-  res.set('Content-Type', 'application/json');
-  res.send(
-    JSON.stringify({
-      token: token.toJwt()
-    })
-  );
-};
+// const download = async (compositionSid, pathName) => {
+//   const response = await axios.get(`https://video.twilio.com/v1/Compositions/${compositionSid}/Media`, {
+//     responseType: 'stream',
+//     auth: {
+//       username: config.twilio.accountSid,
+//       password: config.twilio.authToken
+//     }
+//   });
 
-const download = async (compositionSid, pathName) => {
-  const response = await axios.get(`https://video.twilio.com/v1/Compositions/${compositionSid}/Media`, {
-    responseType: 'stream',
-    auth: {
-      username: config.twilio.accountSid,
-      password: config.twilio.authToken
-    }
-  });
+//   response.data.pipe(fs.createWriteStream(pathName))
 
-  response.data.pipe(fs.createWriteStream(pathName))
+//   return new Promise((resolve, reject) => {
+//     response.data.on('end', () => {
+//       resolve();
+//     });
 
-  return new Promise((resolve, reject) => {
-    response.data.on('end', () => {
-      resolve();
-    });
-
-    response.data.on('error', err => {
-      reject(err);
-    })
-  })
-}
+//     response.data.on('error', err => {
+//       reject(err);
+//     })
+//   })
+// }
 
 const sendRecordingEmail = (compositionSid, userEmail) => {
   const mailData = {
@@ -63,7 +54,7 @@ const sendRecordingEmail = (compositionSid, userEmail) => {
     html: `
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-    <h2 style="font-family: 'Roboto', sans-serif;">Please find linked the recording of our call.\n<a href="${process.env.REACT_APP_BASE_URL}/api/getMeeting?compositionsid=${compositionSid}">Get recording of our video call</a></h2>
+    <h2 style="font-family: 'Roboto', sans-serif;">Please find linked the recording of our call.\n<a href="https://video.twilio.com/v1/Compositions/${compositionSid}/Media">Get recording of our video call</a></h2>
     `
   };
 
@@ -150,26 +141,26 @@ app.post('/api/endMeeting', (req, res) => {
   setTimeout(sendRecordingEmail(composition.sid, userEmail), 3*60*1000)
 });
 
-app.get('/api/getMeeting', (req, res) => {
-  const compositionSid = req.query.compositionsid;
-  const pathName = path.resolve(__dirname, 'files', 'recording.mp4');
+// app.get('/api/getMeeting', (req, res) => {
+//   const compositionSid = req.query.compositionsid;
+//   const pathName = path.resolve(__dirname, 'files', 'recording.mp4');
 
-  download(compositionSid, pathName).then(() => {
-    res.writeHead(200, {
-        'Content-Type': 'text/html'
-    });
-    res.write(`
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-    <h2 style="font-family: 'Roboto', sans-serif;"><a href="${process.env.REACT_APP_BASE_URL}/files/recording.mp4" download>Download the recording.</a></h2>
-    `);
-    res.end();
-  });
-});
+//   download(compositionSid, pathName).then(() => {
+//     res.writeHead(200, {
+//         'Content-Type': 'text/html'
+//     });
+//     res.write(`
+//     <link rel="preconnect" href="https://fonts.gstatic.com">
+//     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+//     <h2 style="font-family: 'Roboto', sans-serif;"><a href="${process.env.REACT_APP_BASE_URL}/files/recording.mp4" download>Download the recording.</a></h2>
+//     `);
+//     res.end();
+//   });
+// });
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/client/build/index.html'));
-});
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname + '/client/build/index.html'));
+// });
 
 app.listen(process.env.PORT || 5000, () =>
   console.log('Express server is running')
