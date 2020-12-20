@@ -98,6 +98,10 @@ app.post('/api/endMeeting', (req, res) => {
     res.status(200).send({
       message: "Created Composition with SID=" + composition.sid
     })
+  }).catch(err => {
+    res.status(500).send({
+      message: err.message
+    })
   });
 });
 
