@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const pino = require('express-pino-logger')();
 const { videoToken } = require('./tokens');
+const axios = require('axios');
 
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
@@ -82,6 +83,7 @@ app.post('/api/setMeeting', (req, res) => {
 
 app.post('/api/endMeeting', (req, res) => {
   const roomSid = req.body.roomSid;
+  const userEmail = req.body.userEmail;
   const client = require('twilio')(config.twilio.apiKey, config.twilio.apiSecret, {accountSid: config.twilio.accountSid});
   client.video.rooms(roomSid).update({ status: 'completed' });
   client.video.compositions.create({
@@ -92,12 +94,22 @@ app.post('/api/endMeeting', (req, res) => {
         video_sources: ['*']
       }
     },
-    statusCallback: `${process.env.REACT_APP_BASE_URL}/api/composition`,
-    // statusCallback: `http://localhost:5000/api/composition`,
     format: 'mp4'
   }).then(composition =>{
+    // send email that includes endpoint link that will return composition video file
+    const mailData = {
+      from: 'sales@hy.ly',
+      to: userEmail,
+      subject: 'Recording of our video call',
+      html: `
+      <link rel="preconnect" href="https://fonts.gstatic.com">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+      <h2 style="font-family: 'Roboto', sans-serif;">Please find linked the recording of our call.\n<a href="${process.env.REACT_APP_BASE_URL}/api/getMeeting?compositionsid=${composition.sid}">Get recording of meeting</a></h2>
+      `
+    };
+  
     res.status(200).send({
-      message: "Created Composition" + composition.links.media
+      message: "Created Composition :" + composition.links.media
     });
   }).catch(err => {
     res.status(500).send({
@@ -106,9 +118,18 @@ app.post('/api/endMeeting', (req, res) => {
   });
 });
 
-app.post('/api/composition', (req, res) => {
-  res.send({
-    data: req.body
+app.get('/api/getMeeting', (req, res) => {
+  const compositionSid = req.query.compositionsid;
+
+  axios.get(`https://video.twilio.com/v1/Compositions/${compositionSid}/Media`, {
+    auth: {
+      username: config.twilio.accountSid,
+      password: config.twilio.authToken
+    }
+  }).then(response => {
+    res.send({
+      response
+    })
   })
 });
 

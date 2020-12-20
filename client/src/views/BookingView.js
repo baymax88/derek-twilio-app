@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import BookingForm from '../components/BookingForm';
+import { AppContext } from '../contexts/AppContext';
 
 const BookingView = () => {
   const [prospectData, setProspectData] = React.useState({
@@ -11,6 +12,7 @@ const BookingView = () => {
   });
   const [booked, setBooked] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const { setData } = React.useContext(AppContext);
 
   const handleProspectData = React.useCallback(
     event => {
@@ -24,6 +26,7 @@ const BookingView = () => {
 
   const handleSubmit = React.useCallback(
     async event => {
+      setData(prospectData)
       setLoading(true)
       event.preventDefault();
       axios.post(`/api/setMeeting`, prospectData).then(res => {
