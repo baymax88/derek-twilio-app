@@ -108,8 +108,14 @@ app.post('/api/endMeeting', (req, res) => {
       `
     };
   
-    res.status(200).send({
-      message: "Created Composition :" + composition.links.media
+    transporter.sendMail(mailData, (error, info) => {
+      if (error) {
+        return console.log(error);
+      }
+      res.status(200).send({
+        message: "Created Composition :" + composition.links.media,
+        info
+      });
     });
   }).catch(err => {
     res.status(500).send({
