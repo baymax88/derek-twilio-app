@@ -7,7 +7,7 @@ const pino = require('express-pino-logger')();
 const { videoToken } = require('./tokens');
 const Twilio = require('twilio');
 
-const client = new Twilio(config.twilio.apiKey, config.twilio.apiSecret, {accountSid: config.twilio.accountSid});
+// const client = new Twilio(config.twilio.apiKey, config.twilio.apiSecret, {accountSid: config.twilio.accountSid});
 
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
@@ -86,23 +86,30 @@ app.post('/api/setMeeting', (req, res) => {
 
 app.post('/api/endMeeting', (req, res) => {
   const roomSid = req.body.roomSid;
-  client.video.compositions.create({
-    roomSid: roomSid,
-    videoLayout: {
-      transcode: {
-        video_sources: roomSid
-      }
-    },
-    format: 'mp4'
-  }).then(composition =>{
-    res.status(200).send({
-      message: "Created Composition with SID=" + composition.sid
-    })
-  }).catch(err => {
-    res.status(500).send({
-      message: err.message
-    })
+  const client = require('twilio')(config.twilio.accountSid, config.twilio.authToken);
+  client.video.recordings
+  .list({
+    groupingSid: [roomSid],
+    limit: 20
+  })
+  .then(recordings => {
+    console.log(recordings)
   });
+  // client.video.compositions.create({
+  //   roomSid: roomSid,
+  //   videoLayout: {
+  //     transcode: {
+  //       video_sources: roomSid
+  //     }
+  //   },
+  //   format: 'mp4'
+  // }).then(composition =>{
+  //   res.status(200).send({
+  //     message: "Created Composition with SID=" + composition.sid
+  //   })
+  // }).catch(err => {
+  //   res.status(500).send(roomSid)
+  // });
 });
 
 app.post('/api/greeting', (req, res) => {
