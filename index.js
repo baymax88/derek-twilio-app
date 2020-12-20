@@ -140,7 +140,7 @@ app.post('/api/endMeeting', (req, res) => {
     format: 'mp4'
   }).then(composition =>{
     // send email that includes endpoint link that will return composition video file
-    setTimeout(sendRecordingEmail(composition.sid, res, userEmail), 5*60*1000);
+    sendRecordingEmail(composition.sid, res, userEmail);
   }).catch(err => {
     res.status(500).send({
       message: err.message
@@ -152,7 +152,7 @@ app.get('/api/getMeeting', (req, res) => {
   const compositionSid = req.query.compositionsid;
   const pathName = path.resolve(__dirname, 'files', 'recording.mp4');
 
-  download(compositionSid, pathName).then(() => {
+  setTimeout(download(compositionSid, pathName).then(() => {
     res.writeHead(200, {
         'Content-Type': 'text/html'
     });
@@ -162,19 +162,7 @@ app.get('/api/getMeeting', (req, res) => {
     <h2 style="font-family: 'Roboto', sans-serif;"><a href="${process.env.REACT_APP_BASE_URL}/files/recording.mp4" download>Download the recording.</a></h2>
     `);
     res.end();
-  });
-});
-
-app.post('/api/greeting', (req, res) => {
-  const name = req.body.name || 'World';
-  res.setHeader('Content-Type', 'application/json');
-  res.send(JSON.stringify({ greeting: `Hello ${name}!` }));
-})
-
-app.get('/api/greeting', (req, res) => {
-  const name = req.query.name || 'World';
-  res.setHeader('Content-Type', 'application/json');
-  res.send(JSON.stringify({ greeting: `Hello ${name}!` }));
+  }), 3*60*1000);
 });
 
 app.get('*', (req, res) => {
