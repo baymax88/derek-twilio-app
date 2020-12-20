@@ -17,16 +17,17 @@ const MeetingView = () => {
   }, [history]);
 
   const handleEndMeeting = React.useCallback(roomSid => {
-    handleLogout()
-    console.log(data.email)
-    axios.post('/api/endMeeting', {
-      roomSid,
-      userEmail: data.email
-    }).then(res => {
-      if (res.status === 200) {
-        console.log(res.data);
-      }
-    }).catch(err => console.log(err.message))
+    if (data.email !== '') {
+      handleLogout()
+      axios.post('/api/endMeeting', {
+        roomSid,
+        userEmail: data.email
+      }).then(res => {
+        if (res.status === 200) {
+          console.log(res.data);
+        }
+      }).catch(err => console.log(err.message))
+    }
   }, [data.email])
 
   React.useEffect(() => {
