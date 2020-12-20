@@ -1,6 +1,7 @@
 const config = require('./config');
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const pino = require('express-pino-logger')();
@@ -31,6 +32,28 @@ const sendTokenResponse = (token, res) => {
     })
   );
 };
+
+const download = async (compositionSid, pathName) => {
+  const response = await axios.get(`https://video.twilio.com/v1/Compositions/${compositionSid}/Media`, {
+    responseType: 'stream',
+    auth: {
+      username: config.twilio.accountSid,
+      password: config.twilio.authToken
+    }
+  });
+
+  response.data.pipe(fs.createWriteStream(pathName))
+
+  return new Promise((resolve, reject) => {
+    response.data.on('end', () => {
+      resolve();
+    });
+
+    response.data.on('error', err => {
+      reject(err);
+    })
+  })
+}
 
 app.post('/api/setMeeting', (req, res) => {
   const identity = req.body.firstName + '_' + req.body.lastName;
@@ -104,7 +127,7 @@ app.post('/api/endMeeting', (req, res) => {
       html: `
       <link rel="preconnect" href="https://fonts.gstatic.com">
       <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-      <h2 style="font-family: 'Roboto', sans-serif;">Please find linked the recording of our call.\n<a href="${process.env.REACT_APP_BASE_URL}/api/getMeeting?compositionsid=${composition.sid}">Get recording of our video call</a></h2>
+      <h2 style="font-family: 'Roboto', sans-serif;">Please find linked the recording of our call.\n\n<a href="${process.env.REACT_APP_BASE_URL}/api/getMeeting?compositionsid=${composition.sid}">Get recording of our video call</a></h2>
       `
     };
   
@@ -117,6 +140,7 @@ app.post('/api/endMeeting', (req, res) => {
         info
       });
     });
+
   }).catch(err => {
     res.status(500).send({
       message: err.message
@@ -126,17 +150,13 @@ app.post('/api/endMeeting', (req, res) => {
 
 app.get('/api/getMeeting', (req, res) => {
   const compositionSid = req.query.compositionsid;
+  const pathName = path.resolve(__dirname, 'files', 'recording.mp4');
 
-  axios.get(`https://video.twilio.com/v1/Compositions/${compositionSid}/Media`, {
-    auth: {
-      username: config.twilio.accountSid,
-      password: config.twilio.authToken
-    }
-  }).then(response => {
-    res.send({
-      response
-    })
-  })
+  download(compositionSid, pathName).then(() => {
+    res.status(200).send({
+      message: `${process.env.REACT_APP_BASE_URL}/files/recording.mp4`
+    });
+  });
 });
 
 app.post('/api/greeting', (req, res) => {
