@@ -135,6 +135,8 @@ app.post('/api/getMeeting', (req, res) => {
       r.on("response", (res) => {
         res.pipe(file);
       });
+
+      res.send(response)
     }).catch((error) => {
       console.log("Error fetching /Media resource " + error);
     });
