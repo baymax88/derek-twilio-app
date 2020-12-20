@@ -14,16 +14,15 @@ const MeetingView = () => {
     history.push('/booking');
   }, [history]);
 
-  const handleEndMeeting = room => {
+  const handleEndMeeting = roomSid => {
     handleLogout()
-    console.log(room)
-    // axios.post('/api/endMeeting', {
-    //   roomSid
-    // }).then(res => {
-    //   if (res.status === 200) {
-    //     console.log('success')
-    //   }
-    // }).catch(err => console.log(err.message))
+    axios.post('/api/endMeeting', {
+      roomSid,
+    }).then(res => {
+      if (res.status === 200) {
+        console.log('success')
+      }
+    }).catch(err => console.log(err.message))
   }
 
   React.useEffect(() => {

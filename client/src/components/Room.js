@@ -88,7 +88,7 @@ const Room = ({ roomName, token, handleEndMeeting }) => {
         </div> */}
         {renderRemoteParticipant()}
         <div className="button-box">
-          <button className="phone-off" onClick={() => handleEndMeeting(room)}>
+          <button className="phone-off" onClick={() => handleEndMeeting(room.sid)}>
             <PhoneOff />
           </button>
           <button className="audio" onClick={audioMute}>
