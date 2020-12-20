@@ -4,7 +4,6 @@ const path = require('path');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
-const cron = require('node-cron');
 const pino = require('express-pino-logger')();
 const { videoToken } = require('./tokens');
 const axios = require('axios');
@@ -56,7 +55,7 @@ const download = async (compositionSid, pathName) => {
   })
 }
 
-const sendRecordingEmail = (compositionSid, res) => {
+const sendRecordingEmail = (compositionSid, res, userEmail) => {
   const mailData = {
     from: 'sales@hy.ly',
     to: userEmail,
@@ -141,7 +140,7 @@ app.post('/api/endMeeting', (req, res) => {
     format: 'mp4'
   }).then(composition =>{
     // send email that includes endpoint link that will return composition video file
-    setTimeout(sendRecordingEmail(composition.sid, res), 5*60*1000);
+    setTimeout(sendRecordingEmail(composition.sid, res, userEmail), 5*60*1000);
   }).catch(err => {
     res.status(500).send({
       message: err.message
@@ -161,7 +160,8 @@ app.get('/api/getMeeting', (req, res) => {
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <h2 style="font-family: 'Roboto', sans-serif;"><a href="${process.env.REACT_APP_BASE_URL}/files/recording.mp4" download>Download the recording.</a></h2>
-    `)
+    `);
+    res.end();
   });
 });
 
