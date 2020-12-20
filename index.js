@@ -44,18 +44,18 @@ app.post('/api/setMeeting', (req, res) => {
     html: `
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-    <h2 style="font-family: 'Roboto', sans-serif;">You are invited to join a video call on ${req.body.dateTime.split('T')[0]} ${req.body.dateTime.split('T')[1].substring(0, 5)}.<br/>Please click on <a href="${process.env.REACT_APP_BASE_URL}/meeting/${room}/${token.toJwt()}">here</a> to join.</h2>
+    <h2 style="font-family: 'Roboto', sans-serif;">You are invited to join a video call on ${req.body.dateTime.split('T')[0]} ${req.body.dateTime.split('T')[1].substring(0, 5)}.\nPlease click on <a href="${process.env.REACT_APP_BASE_URL}/meeting/${room}/${token.toJwt()}">here</a> to join.</h2>
     `
   };
 
   const mailData2Sales = {
     from: 'sales@hy.ly',
-    to: 'smartbay80@gmail.com',
+    to: process.env.SMTP_AUTH_USER,
     subject: 'Video call scheduled',
     html: `
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-    <h2 style="font-family: 'Roboto', sans-serif;">You are invited to join a video call on ${req.body.dateTime.split('T')[0]} ${req.body.dateTime.split('T')[1].substring(0, 5)}.<br />Please click on <a href="${process.env.REACT_APP_BASE_URL}/meeting/${room}/${salesToken.toJwt()}">here</a> to join.</h2>
+    <h2 style="font-family: 'Roboto', sans-serif;">You are invited to join a video call on ${req.body.dateTime.split('T')[0]} ${req.body.dateTime.split('T')[1].substring(0, 5)}.\nPlease click on <a href="${process.env.REACT_APP_BASE_URL}/meeting/${room}/${salesToken.toJwt()}">here</a> to join.</h2>
     `
   };
 
@@ -83,26 +83,32 @@ app.post('/api/setMeeting', (req, res) => {
 app.post('/api/endMeeting', (req, res) => {
   const roomSid = req.body.roomSid;
   const client = require('twilio')(config.twilio.apiKey, config.twilio.apiSecret, {accountSid: config.twilio.accountSid});
-  client.video.rooms(roomSid).update({status: 'completed'}).then(() => {
-    client.video.compositions.create({
-      roomSid: roomSid,
-      audioSources: '*',
-      videoLayout: {
-        grid : {
-          video_sources: ['*']
-        }
-      },
-      // statusCallback: 'http://my.server.org/callbacks',
-      format: 'mp4'
-    }).then(composition =>{
-      res.status(200).send({
-        message: "Created Composition" + composition.links.media
-      })
-    }).catch(err => {
-      res.status(500).send({
-        message: err.message
-      })
+  client.video.rooms(roomSid).update({ status: 'completed' });
+  client.video.compositions.create({
+    roomSid: roomSid,
+    audioSources: '*',
+    videoLayout: {
+      grid : {
+        video_sources: ['*']
+      }
+    },
+    statusCallback: `${process.env.REACT_APP_BASE_URL}/api/composition`,
+    // statusCallback: `http://localhost:5000/api/composition`,
+    format: 'mp4'
+  }).then(composition =>{
+    res.status(200).send({
+      message: "Created Composition" + composition.links.media
     });
+  }).catch(err => {
+    res.status(500).send({
+      message: err.message
+    });
+  });
+});
+
+app.post('/api/composition', (req, res) => {
+  res.send({
+    data: req.body
   })
 });
 
