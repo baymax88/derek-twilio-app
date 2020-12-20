@@ -9,7 +9,14 @@ const AppContextProvider = (props) => {
     lastName: '',
     email: '',
     dateTime: new Date().toISOString().substring(0, 19)
+  }, () => {
+    const localData = localStorage.getItem('data')
+    return localData ? JSON.parse(localData) : []
   })
+
+  useEffect(() => {
+    localStorage.setItem('data', JSON.stringify(data))
+  }, [data])
 
   const setData = (data) => {
     dispatch({
