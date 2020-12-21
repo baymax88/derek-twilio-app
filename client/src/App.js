@@ -9,7 +9,7 @@ const App = () => {
   return (
     <div className="app">
       <header>
-        <h1>hy.ly Video Meeting</h1>
+        <h1>Derek Video Meeting</h1>
       </header>
       <main>
         <AppContextProvider>

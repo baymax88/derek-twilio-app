@@ -27,7 +27,7 @@ let userEmail = '';
 
 const sendRecordingEmail = (url, userEmail) => {
   const mailData = {
-    from: 'sales@hy.ly',
+    from: 'sales@gmail.com',
     to: userEmail,
     subject: 'Recording of our video call',
     html: `
@@ -52,7 +52,7 @@ app.post('/api/setMeeting', (req, res) => {
   const salesToken = videoToken('sales', room, config);
 
   const mailData = {
-    from: 'sales@hy.ly',
+    from: 'sales@gmail.com',
     to: req.body.email,
     subject: 'Video call scheduled',
     html: `
@@ -63,7 +63,7 @@ app.post('/api/setMeeting', (req, res) => {
   };
 
   const mailData2Sales = {
-    from: 'sales@hy.ly',
+    from: 'sales@gmail.com',
     to: process.env.SMTP_AUTH_USER,
     subject: 'Video call scheduled',
     html: `
