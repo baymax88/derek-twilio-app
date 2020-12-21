@@ -96,7 +96,6 @@ app.post('/api/setMeeting', (req, res) => {
 
 app.post('/api/endMeeting', (req, res) => {
   const roomSid = req.body.roomSid;
-  userEmail = req.body.userEmail;
   const client = require('twilio')(config.twilio.apiKey, config.twilio.apiSecret, {accountSid: config.twilio.accountSid});
   client.video.rooms(roomSid).update({ status: 'completed' });
   client.video.compositions.create({
