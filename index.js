@@ -141,6 +141,8 @@ app.post('/api/getMeeting', (req, res) => {
     }).catch((error) => {
       res.status(500).send("Error fetching /Media resource " + error);
     });
+  } else {
+    res.status(204).send('compositioin is not available');
   }
 });
 
