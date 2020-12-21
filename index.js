@@ -122,7 +122,7 @@ app.post('/api/endMeeting', (req, res) => {
 });
 
 app.post('/api/getMeeting', (req, res) => {
-  if (req.query.statusCallbackEvent === 'composition-available') {
+  if (req.query.StatusCallbackEvent === 'composition-available') {
     const client = require('twilio')(config.twilio.apiKey, config.twilio.apiSecret, {accountSid: config.twilio.accountSid});
     const compositionSid = req.query.CompositionSid;
     const uri = "https://video.twilio.com/v1/Compositions/" + compositionSid + "/Media?Ttl=3600";
