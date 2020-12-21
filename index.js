@@ -134,7 +134,7 @@ app.post('/api/getMeeting', (req, res) => {
       uri: uri,
     }).then((response) => {
       // For example, download the media to a local file
-      const requestUrl = response.data.redirect_to;
+      const requestUrl = response.body.redirect_to;
       sendRecordingEmail(requestUrl, userEmail);
       res.status(200).send("success");
 
