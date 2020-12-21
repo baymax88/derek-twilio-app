@@ -23,8 +23,9 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(pino);
+let userEmail = '';
 
-const sendRecordingEmail = (compositionSid, userEmail) => {
+const sendRecordingEmail = (url, userEmail) => {
   const mailData = {
     from: 'sales@hy.ly',
     to: userEmail,
@@ -32,7 +33,7 @@ const sendRecordingEmail = (compositionSid, userEmail) => {
     html: `
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-    <h2 style="font-family: 'Roboto', sans-serif;">Please find linked the recording of our call.\n<a href="${process.env.REACT_APP_BASE_URL}/api/getMeeting?compositionsid=${compositionSid}">Get recording of our video call</a></h2>
+    <h2 style="font-family: 'Roboto', sans-serif;">Please find linked the recording of our call.\n<a href="${url}">Get recording of our video call</a></h2>
     `
   };
 
@@ -46,6 +47,7 @@ const sendRecordingEmail = (compositionSid, userEmail) => {
 app.post('/api/setMeeting', (req, res) => {
   const identity = req.body.firstName + '_' + req.body.lastName;
   const room = req.body.firstName + '_' + req.body.lastName + '_room';
+  userEmail = req.body.email;
   const token = videoToken(identity, room, config);
   const salesToken = videoToken('sales', room, config);
 
@@ -94,7 +96,7 @@ app.post('/api/setMeeting', (req, res) => {
 
 app.post('/api/endMeeting', (req, res) => {
   const roomSid = req.body.roomSid;
-  const userEmail = req.body.userEmail;
+  userEmail = req.body.userEmail;
   const client = require('twilio')(config.twilio.apiKey, config.twilio.apiSecret, {accountSid: config.twilio.accountSid});
   client.video.rooms(roomSid).update({ status: 'completed' });
   client.video.compositions.create({
@@ -120,9 +122,9 @@ app.post('/api/endMeeting', (req, res) => {
 });
 
 app.post('/api/getMeeting', (req, res) => {
-  if (req.data.StatusCallbackEvent === 'composition-available') {
+  if (req.query.statusCallbackEvent === 'composition-available') {
     const client = require('twilio')(config.twilio.apiKey, config.twilio.apiSecret, {accountSid: config.twilio.accountSid});
-    const compositionSid = req.data.CompositionSid;
+    const compositionSid = req.query.CompositionSid;
     const uri = "https://video.twilio.com/v1/Compositions/" + compositionSid + "/Media?Ttl=3600";
 
     client.request({
@@ -130,15 +132,12 @@ app.post('/api/getMeeting', (req, res) => {
       uri: uri,
     }).then((response) => {
       // For example, download the media to a local file
-      const file = fs.createWriteStream("myFile.mp4");
-      const r = request(response.data.redirect_to);
-      r.on("response", (res) => {
-        res.pipe(file);
-      });
+      const requestUrl = request(response.data.redirect_to);
+      sendRecordingEmail(requestUrl, userEmail);
+      res.send("success");
 
-      res.send(response)
     }).catch((error) => {
-      console.log("Error fetching /Media resource " + error);
+      res.send("Error fetching /Media resource " + error);
     });
   }
 });
