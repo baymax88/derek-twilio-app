@@ -1,12 +1,10 @@
 const config = require('./config');
 const express = require('express');
 const path = require('path');
-const fs = require('fs');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const pino = require('express-pino-logger')();
 const { videoToken } = require('./tokens');
-const axios = require('axios');
 
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
@@ -107,11 +105,9 @@ app.post('/api/endMeeting', (req, res) => {
       }
     },
     statusCallback: `${process.env.REACT_APP_BASE_URL}/api/getMeeting`,
-    // statusCallback: `http://localhost:5000/api/getMeeting`,
     statusCallbackMethod: 'POST',
     format: 'mp4'
   }).then(() => {
-    // sendRecordingEmail(composition.sid, userEmail);
     res.status(200).send({
       message: 'success'
     });
