@@ -27,7 +27,7 @@ let userEmail = '';
 
 const sendRecordingEmail = (url, userEmail) => {
   const mailData = {
-    from: 'sales@gmail.com',
+    from: 'sales@hy.ly',
     to: userEmail,
     subject: 'Recording of our video call',
     html: `
@@ -52,7 +52,7 @@ app.post('/api/setMeeting', (req, res) => {
   const salesToken = videoToken('sales', room, config);
 
   const mailData = {
-    from: 'sales@gmail.com',
+    from: 'sales@hy.ly',
     to: req.body.email,
     subject: 'Video call scheduled',
     html: `
@@ -63,7 +63,7 @@ app.post('/api/setMeeting', (req, res) => {
   };
 
   const mailData2Sales = {
-    from: 'sales@gmail.com',
+    from: 'sales@hy.ly',
     to: process.env.SMTP_AUTH_USER,
     subject: 'Video call scheduled',
     html: `
@@ -124,9 +124,9 @@ app.post('/api/endMeeting', (req, res) => {
 });
 
 app.post('/api/getMeeting', (req, res) => {
-  if (req.query.StatusCallbackEvent === 'composition-available') {
+  if (req.body.StatusCallbackEvent === 'composition-available') {
     const client = require('twilio')(config.twilio.apiKey, config.twilio.apiSecret, {accountSid: config.twilio.accountSid});
-    const compositionSid = req.query.CompositionSid;
+    const compositionSid = req.body.CompositionSid;
     const uri = "https://video.twilio.com/v1/Compositions/" + compositionSid + "/Media?Ttl=3600";
 
     client.request({
