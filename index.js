@@ -113,7 +113,9 @@ app.post('/api/endMeeting', (req, res) => {
     format: 'mp4'
   }).then(() => {
     // sendRecordingEmail(composition.sid, userEmail);
-    res.status(200).send();
+    res.status(200).send({
+      message: 'success'
+    });
   }).catch(err => {
     res.status(500).send({
       message: err.message
@@ -134,10 +136,10 @@ app.post('/api/getMeeting', (req, res) => {
       // For example, download the media to a local file
       const requestUrl = request(response.data.redirect_to);
       sendRecordingEmail(requestUrl, userEmail);
-      res.send("success");
+      res.status(200).send("success");
 
     }).catch((error) => {
-      res.send("Error fetching /Media resource " + error);
+      res.status(500).send("Error fetching /Media resource " + error);
     });
   }
 });
